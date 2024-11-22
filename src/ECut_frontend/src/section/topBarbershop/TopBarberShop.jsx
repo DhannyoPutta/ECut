@@ -49,7 +49,7 @@ const TopBarberShop = () => {
   }, []);
 
   return (
-    <div className="w-screen flex flex-col items-center h-screen bg-black text-white">
+    <div className="w-screen flex flex-col items-center h-screen bg-white text-tertiary">
       <h1 className="text-5xl font-bold text-center py-4">Most Famous Barbershops</h1>
       <div className="w-2/3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
         {data.map((datum, index) => (

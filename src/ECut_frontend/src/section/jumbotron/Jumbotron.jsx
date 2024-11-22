@@ -2,7 +2,7 @@ import React from 'react'
 
 const Jumbotron = () => {
     return (
-        <div className='w-screen h-screen flex justify-center items-center bg-[url(/final.png)] bg-cover text-white'>
+        <div className='w-screen h-screen flex justify-center items-center bg-[url(/fina.png)] bg-cover text-tertiary'>
             <div className='flex flex-col space-y-8 -translate-x-52'>
                 <div className='font-bold text-7xl'>
                     Extraordinary<br />Barber Hub For Hair <br /> Enthusiasts

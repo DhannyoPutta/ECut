@@ -1,27 +1,22 @@
-import { useState } from 'react';
-import { ECut_backend } from 'declarations/ECut_backend';
-import NavigationBar from './component/navbar/Navbar';
-import Jumbotron from './section/jumbotron/Jumbotron';
-import TopBarberShop from './section/topBarbershop/TopBarberShop';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Link, useLocation } from 'react-router-dom';
+import Home from './pages/Home';
+import NotFound from './pages/NotFound';
+import Login from './pages/Login';
 
 function App() {
-  const [greeting, setGreeting] = useState('');
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    const name = event.target.elements.name.value;
-    ECut_backend.greet(name).then((greeting) => {
-      setGreeting(greeting);
-    });
-    return false;
-  }
-
   return (
-    <main>
-      <NavigationBar/>
-      <Jumbotron/>
-      <TopBarberShop/>
-    </main>
+    <Router>
+      {/* <Naviga /> */}
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        {/* <Route path="/about" element={<About />} /> */}
+        {/* <Route path="/contact" element={<Contact />} /> */}
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Router>
   );
 }
 
