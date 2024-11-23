@@ -24,6 +24,20 @@ actor ECut {
     userPassword : Text;
   };
 
+  type BarberShop = {
+    barberShopId : Text;
+    barberShopName : Text;
+    barberShopLocation : Text;
+    barberShopRating : Text;
+    userId : Text;
+  };
+
+  type BarberShopCreate = {
+    barberShopName : Text;
+    barberShopLocation : Text;
+
+  };
+
   type Service = {
     serviceId : Text;
     serviceName : Text;
