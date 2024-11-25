@@ -2,18 +2,29 @@ import React from 'react'
 
 const NavigationBar = () => {
   return (
-    <nav className='flex justify-around items-center fixed top-0 px-5 py-5 w-full box-border text-tertiary bg-white z-20'>
-      <div className="flex">
-        <img src="./logo.png" alt="ECut" className='w-12 h-10' />
+    <header id="header" class="fixed-top d-flex align-items-cente">
+      <div class="container-fluid container-xl d-flex align-items-center justify-content-lg-between">
+  
         <div className='font-bold flex items-center pl-4 text-3xl'>
+        <a href="index.html" class="logo me-auto me-lg-0 pe-1">
+          <img src="./logo.png" alt="ECut" class="img-fluid"/>
+        </a>
+        <h1>
           ECut
+        </h1>
         </div>
+
+        <nav id="navbar" class="navbar order-last order-lg-0">
+          <ul>
+            <li><a class="nav-link" href="explore">Explore</a></li>
+            <li><a href=""></a></li>
+            <li><a class="nav-link" href="login">Login</a></li>
+          </ul>
+          <i class="bi bi-list mobile-nav-toggle"></i>
+        </nav>  
       </div>
-      <ul className="flex gap-6 text-2xl items-center font-semibold">
-        <li><a href="explore">Explore</a></li>
-        <li><a href="login">Login</a></li>
-      </ul>
-    </nav>
+    </header>
+
   )
 }
 

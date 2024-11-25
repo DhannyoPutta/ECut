@@ -1,70 +1,106 @@
 import React, { useEffect, useState } from 'react';
+// import { ECut_backend } from 'declarations/ECut_backend';
 
 const TopBarberShop = () => {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([
+    {
+      barberShopProfileLink: "wp2.jpg",
+      barberShopName: "Shop 3",
+      barberShopRating: 4.8,
+    },
+    {
+      barberShopProfileLink: "wp2.jpg",
+      barberShopName: "Shop 4",
+      barberShopRating: 3.9,
+    }
+  ]);
+  // useEffect(() => {
+  //   setData(data);
+  // }, []);
 
-  useEffect(() => {
-    setData([
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 1",
-        barberShopRating: 3.14,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 2",
-        barberShopRating: 4.1,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 3",
-        barberShopRating: 4.8,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 4",
-        barberShopRating: 3.9,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 5",
-        barberShopRating: 4.5,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 6",
-        barberShopRating: 4.2,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 7",
-        barberShopRating: 3.7,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 8",
-        barberShopRating: 4.3,
-      },
-    ]);
-  }, []);
+
+  // useEffect(() => {
+  //   setData([
+  //     {
+  //       barberShopProfileLink: "wp2.jpg",
+  //       barberShopName: "Shop 1",
+  //       barberShopRating: 3.14,
+  //     },
+  //     {
+  //       barberShopProfileLink: "wp2.jpg",
+  //       barberShopName: "Shop 2",
+  //       barberShopRating: 4.1,
+  //     },
+  //     {
+  //       barberShopProfileLink: "wp2.jpg",
+  //       barberShopName: "Shop 3",
+  //       barberShopRating: 4.8,
+  //     },
+  //     {
+  //       barberShopProfileLink: "wp2.jpg",
+  //       barberShopName: "Shop 4",
+  //       barberShopRating: 3.9,
+  //     },
+  //     {
+  //       barberShopProfileLink: "wp2.jpg",
+  //       barberShopName: "Shop 5",
+  //       barberShopRating: 4.5,
+  //     },
+  //     {
+  //       barberShopProfileLink: "wp2.jpg",
+  //       barberShopName: "Shop 6",
+  //       barberShopRating: 4.2,
+  //     },
+  //     {
+  //       barberShopProfileLink: "wp2.jpg",
+  //       barberShopName: "Shop 7",
+  //       barberShopRating: 3.7,
+  //     },
+  //     {
+  //       barberShopProfileLink: "wp2.jpg",
+  //       barberShopName: "Shop 8",
+  //       barberShopRating: 4.3,
+  //     },
+  //   ]);
+  // }, []);
 
   return (
-    <div className="w-screen flex flex-col items-center h-screen bg-white text-tertiary">
-      <h1 className="text-5xl font-bold text-center py-4">Most Famous Barbershops</h1>
-      <div className="w-2/3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
-        {data.map((datum, index) => (
-          <div key={index} className="bg-white text-tertiary p-4 rounded-lg shadow-lg">
-            <img
-              src={datum.barberShopProfileLink}
-              alt={datum.barberShopName}
-              className="w-full h-40 object-cover rounded-t-lg"
-            />
-            <h2 className="text-xl font-semibold mt-2">{datum.barberShopName}</h2>
-            <p className="font-medium">Rating: {datum.barberShopRating}</p>
-          </div>
-        ))}
+
+    <section id="chefs" class="barber-shop">
+    <div class="container" data-aos="fade-up">
+
+      <div class="section-title">
+        <h2>Barber Shop</h2>
+        <p>Popular Barber Shop</p>
       </div>
+
+      <div class="row">
+
+      {data.map((datum, index) => (
+        <div class="col-lg-4 col-md-6">
+          <div class="member" data-aos="zoom-in" data-aos-delay="200">
+            <img src={datum.barberShopProfileLink}
+            alt={datum.barberShopName}
+            class="img-fluid"/>
+            <div class="member-info">
+              <div class="member-info-content">
+                <h4>{datum.barberShopName}</h4>
+                <span>Rating : {datum.barberShopRating} <i class="bi bi-star"></i></span>
+              </div>
+              <div class="social">                
+                <a href=""><i class="bi bi-twitter"></i></a>
+                <a href=""><i class="bi bi-facebook"></i></a>
+                <a href=""><i class="bi bi-instagram"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>      
+      ))}
+      </div>
+
     </div>
+  </section>
+
   );
 };
 
