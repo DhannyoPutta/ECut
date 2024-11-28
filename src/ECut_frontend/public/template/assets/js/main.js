@@ -167,10 +167,20 @@
   let preloader = select('#preloader');
   if (preloader) {
     window.addEventListener('load', () => {
-      preloader.remove()
+      window.hideLoader();
     });
   }
 
+  function showLoader()
+  {
+    preloader.style.display = "block";
+  }
+  window.showLoader = showLoader;
+  function hideLoader()
+  {
+    preloader.style.display = "none"
+  }
+  window.hideLoader = hideLoader;
   /**
    * Menu isotope and filter
    */

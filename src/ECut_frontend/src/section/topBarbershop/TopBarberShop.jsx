@@ -1,68 +1,19 @@
 import React, { useEffect, useState } from 'react';
-// import { ECut_backend } from 'declarations/ECut_backend';
+import { ECut_backend } from 'declarations/ECut_backend';
+import LoadingPage from '../../component/loading/page'
 
 const TopBarberShop = () => {
-  const [data, setData] = useState([
-    {
-      barberShopProfileLink: "wp2.jpg",
-      barberShopName: "Shop 3",
-      barberShopRating: 4.8,
-    },
-    {
-      barberShopProfileLink: "wp2.jpg",
-      barberShopName: "Shop 4",
-      barberShopRating: 3.9,
-    }
-  ]);
-  // useEffect(() => {
-  //   setData(data);
-  // }, []);
+  const [data, setData] = useState();
+  useEffect(() => {
+    ECut_backend.get_all_barberShops().then((result) => {
+        console.log(result);
+        setData(result);
+    })
+}, [])
 
-
-  // useEffect(() => {
-  //   setData([
-  //     {
-  //       barberShopProfileLink: "wp2.jpg",
-  //       barberShopName: "Shop 1",
-  //       barberShopRating: 3.14,
-  //     },
-  //     {
-  //       barberShopProfileLink: "wp2.jpg",
-  //       barberShopName: "Shop 2",
-  //       barberShopRating: 4.1,
-  //     },
-  //     {
-  //       barberShopProfileLink: "wp2.jpg",
-  //       barberShopName: "Shop 3",
-  //       barberShopRating: 4.8,
-  //     },
-  //     {
-  //       barberShopProfileLink: "wp2.jpg",
-  //       barberShopName: "Shop 4",
-  //       barberShopRating: 3.9,
-  //     },
-  //     {
-  //       barberShopProfileLink: "wp2.jpg",
-  //       barberShopName: "Shop 5",
-  //       barberShopRating: 4.5,
-  //     },
-  //     {
-  //       barberShopProfileLink: "wp2.jpg",
-  //       barberShopName: "Shop 6",
-  //       barberShopRating: 4.2,
-  //     },
-  //     {
-  //       barberShopProfileLink: "wp2.jpg",
-  //       barberShopName: "Shop 7",
-  //       barberShopRating: 3.7,
-  //     },
-  //     {
-  //       barberShopProfileLink: "wp2.jpg",
-  //       barberShopName: "Shop 8",
-  //       barberShopRating: 4.3,
-  //     },
-  //   ]);
-  // }, []);
+  if (!data) {
+    return <LoadingPage />
+  }
 
   return (
 
@@ -76,10 +27,10 @@ const TopBarberShop = () => {
 
       <div class="row">
 
-      {data.map((datum, index) => (
-        <div class="col-lg-4 col-md-6">
+      {data.map((datum) => (
+        <div class="col-lg-4 col-md-6" key={datum.barberShopId}>
           <div class="member" data-aos="zoom-in" data-aos-delay="200">
-            <img src={datum.barberShopProfileLink}
+            <img src={datum.barberShopProfileLink ?? "wp2.jpg"}
             alt={datum.barberShopName}
             class="img-fluid"/>
             <div class="member-info">

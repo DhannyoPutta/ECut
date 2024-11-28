@@ -6,19 +6,19 @@ const NavigationBar = () => {
       <div class="container-fluid container-xl d-flex align-items-center justify-content-lg-between">
   
         <div className='font-bold flex items-center pl-4 text-3xl'>
-        <a href="index.html" class="logo me-auto me-lg-0 pe-1">
+        <a href="/" class="logo me-auto me-lg-0 pe-1">
           <img src="./logo.png" alt="ECut" class="img-fluid"/>
+          <h1>
+            ECut
+          </h1>
         </a>
-        <h1>
-          ECut
-        </h1>
         </div>
 
         <nav id="navbar" class="navbar order-last order-lg-0">
           <ul>
             <li><a class="nav-link" href="explore">Explore</a></li>
-            <li><a href=""></a></li>
             <li><a class="nav-link" href="login">Login</a></li>
+            <li><a class="nav-link" href="register">Register</a></li>
           </ul>
           <i class="bi bi-list mobile-nav-toggle"></i>
         </nav>  

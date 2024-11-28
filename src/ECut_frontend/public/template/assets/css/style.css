@@ -450,6 +450,27 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0;
 }
 
+.login-background {
+  width: 100%;
+  height: 100vh;
+  background: url("../../../login.jpg") top center;
+  background-size: cover;
+  background-color: rgba(0,0,0,0.7);
+  background-blend-mode: overlay;
+  position: relative;
+}
+
+.hyper-link
+{
+  text-decoration: none; 
+  font-family: "inherit";
+  color: #cda45e;
+}
+.hyper-link:hover
+{
+  color: #e0b975;
+}
+
 #hero:before {
   content: "";
   background: rgba(0, 0, 0, 0.5);
