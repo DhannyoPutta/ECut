@@ -174,17 +174,17 @@ actor ECut {
     totalRating / Float.fromInt(totalReviews);
   };
 
-private func generateToken(userId : Text) : Text {
+  private func generateToken(userId : Text) : Text {
     let timestamp = Time.now();
-    
-    let timestampText = debug_show(timestamp);
+
+    let timestampText = debug_show (timestamp);
 
     let rawToken = userId # "_" # timestampText;
 
     // this is where you operate the rawtoken
-    
+
     return rawToken;
-};
+  };
 
   public func create_user(user : UserCreate) : async Result.Result<User, Text> {
     if (Text.size(user.userName) <= 4) {
@@ -213,20 +213,14 @@ private func generateToken(userId : Text) : Text {
     return Iter.toArray(Iter.map<(Text, User), User>(users.entries(), func(entry) { entry.1 }));
   };
 
-  public func login(userId : Text, password : Text) : async Result.Result<Text, Text> {
-    switch (users.get(userId)) {
-      case (null) {
-        return #err("User not found");
-      };
-      case (?user) {
-        if (user.userPassword != password) {
-          return #err("Invalid password");
-        };
+  public func login(userEmail : Text, userPassword : Text) : async Result.Result<Text, Text> {
 
-        let token = generateToken(userId);
+    for ((id, user) in users.entries()) {
+      if (user.userEmail == userEmail and user.userPassword == userPassword) {
+        let token = generateToken(id);
 
         let session : Session = {
-          userId = userId;
+          userId = id;
           token = token;
           createdAt = Time.now();
           expiresAt = Time.now() + 3600_000_000_000;
@@ -237,6 +231,8 @@ private func generateToken(userId : Text) : Text {
         return #ok(token);
       };
     };
+
+    return #err("User not found");
   };
 
   public func validate_session(token : Text) : async Result.Result<Text, Text> {
