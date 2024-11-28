@@ -25,14 +25,16 @@ actor ECut {
   type BarberShop = {
     barberShopId : Text;
     barberShopName : Text;
-    barberShopLocation : Text;
+    barberShopLatitude : Float;
+    barberShopLongitude : Float;
     barberShopRating : Float;
     userId : Text;
   };
 
   type BarberShopCreate = {
     barberShopName : Text;
-    barberShopLocation : Text;
+    barberShopLatitude : Float;
+    barberShopLongitude : Float;
     barberShopRating : Float;
     userId : Text;
   };
@@ -176,6 +178,10 @@ actor ECut {
 
   public query func read_users(userId : Text) : async ?User {
     return users.get(userId);
+  };
+
+  public query func get_all_users() : async [User] {
+    return Iter.toArray(Iter.map<(Text, User), User>(users.entries(), func(entry) { entry.1 }))
   };
 
   public func create_service(service : ServiceCreate) : async ?Service {
@@ -379,7 +385,8 @@ actor ECut {
         let newBarberShop : BarberShop = {
           barberShopId;
           barberShopName = barberShop.barberShopName;
-          barberShopLocation = barberShop.barberShopLocation;
+          barberShopLatitude = barberShop.barberShopLatitude;
+          barberShopLongitude = barberShop.barberShopLongitude;
           barberShopRating = 0;
           userId = barberShop.userId;
         };
@@ -393,6 +400,10 @@ actor ECut {
   public func get_barber_shop(barberShopId : Text) : async ?BarberShop {
     return barberShops.get(barberShopId);
   };
+
+  public query func get_all_barberShops() : async [BarberShop] {
+    return Iter.toArray(Iter.map<(Text, BarberShop), BarberShop>(barberShops.entries(), func(entry) { entry.1 }))
+  };  
 
   public func create_employee(employee : EmployeeCreate) : async ?Employee {
     if (employee.employeeRating < 0 or employee.employeeRating > 5) {
