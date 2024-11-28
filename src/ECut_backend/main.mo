@@ -213,35 +213,27 @@ actor ECut {
     return Iter.toArray(Iter.map<(Text, User), User>(users.entries(), func(entry) { entry.1 }));
   };
 
-  public func login(userEmail : Text, password : Text) : async Result.Result<Text, Text> {
-    let userEntry = Iter.find(users.entries(), func((id, user) : (Text, User)) {
-        user.email == userEmail
-    });
+  public func login(userEmail : Text, userPassword : Text) : async Result.Result<Text, Text> {
 
-    switch (userEntry) {
-        case (null) {
-            return #err("User not found");
+    for ((id, user) in users.entries()) {
+      if (user.userEmail == userEmail and user.userPassword == userPassword) {
+        let token = generateToken(id);
+
+        let session : Session = {
+          userId = id;
+          token = token;
+          createdAt = Time.now();
+          expiresAt = Time.now() + 3600_000_000_000;
         };
-        case (?(userId, user)) {
-            if (user.userPassword != password) {
-                return #err("Invalid password");
-            };
 
-            let token = generateToken(userId);
+        sessions.put(token, session);
 
-            let session : Session = {
-                userId = userId;
-                token = token;
-                createdAt = Time.now();
-                expiresAt = Time.now() + 3600_000_000_000;
-            };
-
-            sessions.put(token, session);
-
-            return #ok(token);
-        };
+        return #ok(token);
+      };
     };
-};
+
+    return #err("User not found");
+  };
 
   public func validate_session(token : Text) : async Result.Result<Text, Text> {
     switch (sessions.get(token)) {
