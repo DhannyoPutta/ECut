@@ -5,6 +5,7 @@ import Nat "mo:base/Nat";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
 import Float "mo:base/Float";
+import Result "mo:base/Result";
 
 actor ECut {
   public type Time = Time.Time;
@@ -153,13 +154,25 @@ actor ECut {
     return ?newReview;
   };
 
-  public query func hello() : async Text {
-    return "Hello";
+  private func calculateAverageRating(
+  currentRating : ?Float, 
+  existingReviews : [Review], 
+  newReviewRating : Float
+) : Float {
+  let baseRating = switch (currentRating) {
+    case null { 0.0 };
+    case (?rating) { rating };
   };
 
-  public func create_user(user : UserCreate) : async ?User {
+  let totalReviews = existingReviews.size() + 1;
+  let totalRating = baseRating * Float.fromInt(existingReviews.size()) + newReviewRating;
+  
+  totalRating / Float.fromInt(totalReviews);
+};
+
+  public func create_user(user : UserCreate) : async Result.Result<User, Text> {
     if (Text.size(user.userName) <= 4) {
-      return null;
+      return #err("Username must be longer than 4 characters");
     };
 
     let userId = generate_id("User");
@@ -173,7 +186,7 @@ actor ECut {
 
     users.put(userId, newUser);
 
-    return ?newUser;
+    return #ok(newUser);
   };
 
   public query func read_users(userId : Text) : async ?User {
@@ -181,7 +194,7 @@ actor ECut {
   };
 
   public query func get_all_users() : async [User] {
-    return Iter.toArray(Iter.map<(Text, User), User>(users.entries(), func(entry) { entry.1 }))
+    return Iter.toArray(Iter.map<(Text, User), User>(users.entries(), func(entry) { entry.1 }));
   };
 
   public func create_service(service : ServiceCreate) : async ?Service {
@@ -207,11 +220,10 @@ actor ECut {
     services.get(serviceId);
   };
 
-  public func create_transaction(transaction : TransactionCreate) : async ?Transaction {
-
+  public func create_transaction(transaction : TransactionCreate) : async Result.Result<Transaction, Text> {
     let totalAmount = calculateTotalAmount(transaction.services);
     if (totalAmount == 0) {
-      return null;
+      return #err("Transaction must include at least one service");
     };
 
     let transactionId = generate_id("Transaction");
@@ -227,7 +239,7 @@ actor ECut {
     };
 
     transactions.put(transactionId, newTransaction);
-    return ?newTransaction;
+    return #ok(newTransaction);
   };
 
   public query func read_transaction(transactionId : Text) : async ?Transaction {
@@ -264,37 +276,76 @@ actor ECut {
     );
   };
 
-  public func create_review(review : ReviewCreate) : async ?Review {
-    // Validate rating range
-    if (review.reviewRating < 0 or review.reviewRating > 5) {
-      return null;
-    };
+  public func create_review(review : ReviewCreate) : async Result.Result<Review, Text> {
+  if (review.reviewRating < 0 or review.reviewRating > 5) {
+    return #err("Review rating must be between 0 and 5");
+  };
 
-    // Verify reviewer exists
-    switch (users.get(review.reviewerId)) {
-      case null { return null };
-      case (?reviewer) {
-        // Validate reviewee based on review type
-        switch (review.reviewType) {
-          case (#Employee) {
-            switch (employees.get(review.revieweeId)) {
-              case null { return null }; // Employee doesn't exist
-              case (?employee) {
-                return createReviewRecord(review);
+  switch (users.get(review.reviewerId)) {
+    case null { return #err("Reviewer does not exist") };
+    case (?reviewer) {
+      switch (review.reviewType) {
+        case (#Employee) {
+          switch (employees.get(review.revieweeId)) {
+            case null { return #err("Employee does not exist") };
+            case (?employee) {
+              let createdReview = createReviewRecord(review);
+
+              switch (createdReview) {
+                case null { return #err("Failed to create review") };
+                case (?newReview) {
+                  let updatedEmployeeRating = calculateAverageRating(
+                    ?employee.employeeRating,
+                    get_employee_reviews(review.revieweeId), // Corrected function name
+                    newReview.reviewRating
+                  );
+
+                  employees.put(
+                    review.revieweeId,
+                    {
+                      employee with
+                      employeeRating = updatedEmployeeRating
+                    },
+                  );
+
+                  return #ok(newReview);
+                };
               };
             };
           };
-          case (#BarberShop) {
-            switch (barberShops.get(review.revieweeId)) {
-              case null { return null }; // Barbershop doesn't exist
-              case (?barberShop) {
-                return createReviewRecord(review);
+        };
+        case (#BarberShop) {
+          switch (barberShops.get(review.revieweeId)) {
+            case null { return #err("Barbershop does not exist") };
+            case (?barberShop) {
+              let createdReview = createReviewRecord(review);
+
+              switch (createdReview) {
+                case null { return #err("Failed to create review") };
+                case (?newReview) {
+                  let updatedBarberShopRating = calculateAverageRating(
+                    ?barberShop.barberShopRating,
+                    get_barber_shop_reviews(review.revieweeId), // Corrected function name
+                    newReview.reviewRating
+                  );
+
+                  barberShops.put(
+                    review.revieweeId,
+                    {
+                      barberShop with
+                      barberShopRating = updatedBarberShopRating
+                    },
+                  );
+
+                  return #ok(newReview);
+                };
               };
             };
           };
         };
       };
     };
+  };
   };
 
   public query func read_review(reviewId : Text) : async ?Review {
@@ -311,75 +362,14 @@ actor ECut {
     );
   };
 
-  public query func read_reviews_by_reviewee(revieweeId : Text) : async [Review] {
-    let allReviews = Iter.toArray(reviews.vals());
-    return Array.filter(
-      allReviews,
-      func(review : Review) : Bool {
-        review.revieweeId == revieweeId;
-      },
-    );
-  };
-
-  public query func get_entity_reviews(entityId : Text) : async [Review] {
-    let allReviews = Iter.toArray(reviews.vals());
-    return Array.filter(
-      allReviews,
-      func(review : Review) : Bool {
-        review.revieweeId == entityId;
-      },
-    );
-  };
-
-  public query func get_entity_average_rating(entityId : Text) : async ?Float {
-    let entityReviews = Array.filter(
-      Iter.toArray(reviews.vals()),
-      func(review : Review) : Bool {
-        review.revieweeId == entityId;
-      },
-    );
-
-    if (entityReviews.size() == 0) {
-      return null;
-    };
-
-    var totalRating : Float = 0;
-    for (review in entityReviews.vals()) {
-      totalRating += review.reviewRating;
-    };
-
-    return ?(totalRating / Float.fromInt(entityReviews.size()));
-  };
-
-  public query func get_average_rating(reviewerId : Text) : async ?Float {
-    let revieweeReviews = Array.filter(
-      Iter.toArray(reviews.vals()),
-      func(review : Review) : Bool {
-        review.reviewerId == reviewerId;
-      },
-    );
-
-    if (revieweeReviews.size() == 0) {
-      return null;
-    };
-
-    var totalRating : Float = 0;
-    for (review in revieweeReviews.vals()) {
-      totalRating += review.reviewRating;
-    };
-
-    return ?(totalRating / Float.fromInt(revieweeReviews.size()));
-  };
-
-  public func create_barber_shop(barberShop : BarberShopCreate) : async ?BarberShop {
+  public func create_barber_shop(barberShop : BarberShopCreate) : async Result.Result<BarberShop, Text> {
     if (Text.size(barberShop.barberShopName) <= 4) {
-      return null;
+      return #err("Barbershop name must be longer than 4 characters");
     };
 
     switch (users.get(barberShop.userId)) {
-      case null { return null };
+      case null { return #err("User does not exist") };
       case (?user) {
-
         let barberShopId = generate_id("BarberShop");
 
         let newBarberShop : BarberShop = {
@@ -392,7 +382,7 @@ actor ECut {
         };
 
         barberShops.put(barberShopId, newBarberShop);
-        return ?newBarberShop;
+        return #ok(newBarberShop);
       };
     };
   };
@@ -402,20 +392,19 @@ actor ECut {
   };
 
   public query func get_all_barberShops() : async [BarberShop] {
-    return Iter.toArray(Iter.map<(Text, BarberShop), BarberShop>(barberShops.entries(), func(entry) { entry.1 }))
-  };  
+    return Iter.toArray(Iter.map<(Text, BarberShop), BarberShop>(barberShops.entries(), func(entry) { entry.1 }));
+  };
 
-  public func create_employee(employee : EmployeeCreate) : async ?Employee {
+  public func create_employee(employee : EmployeeCreate) : async Result.Result<Employee, Text> {
     if (employee.employeeRating < 0 or employee.employeeRating > 5) {
-      return null;
+      return #err("Employee rating must be between 0 and 5");
     };
 
     switch (users.get(employee.userId)) {
-      case null { return null };
+      case null { return #err("User does not exist") };
       case (?user) {
-
         switch (barberShops.get(employee.barberShopId)) {
-          case null { return null };
+          case null { return #err("Barbershop does not exist") };
           case (?barbershop) {
             let existingEmployees = Iter.toArray(employees.vals());
             let hasExistingEmployee = Array.find<Employee>(
@@ -426,7 +415,9 @@ actor ECut {
             );
 
             switch (hasExistingEmployee) {
-              case (?existing) { return null };
+              case (?existing) {
+                return #err("Employee already exists for this user");
+              };
               case null {
                 let employeeId = generate_id("Employee");
 
@@ -438,7 +429,7 @@ actor ECut {
                 };
 
                 employees.put(employeeId, newEmployee);
-                return ?newEmployee;
+                return #ok(newEmployee);
               };
             };
           };
@@ -469,13 +460,13 @@ actor ECut {
     );
   };
 
-  public func update_employee_rating(employeeId : Text, newRating : Float) : async Bool {
+  public func update_employee_rating(employeeId : Text, newRating : Float) : async Result.Result<Employee, Text> {
     if (newRating < 0 or newRating > 5) {
-      return false;
+      return #err("Rating must be between 0 and 5");
     };
 
     switch (employees.get(employeeId)) {
-      case null { return false };
+      case null { return #err("Employee not found") };
       case (?existingEmployee) {
         let updatedEmployee : Employee = {
           employeeId = existingEmployee.employeeId;
@@ -484,7 +475,7 @@ actor ECut {
           barberShopId = existingEmployee.barberShopId;
         };
         employees.put(employeeId, updatedEmployee);
-        return true;
+        return #ok(updatedEmployee);
       };
     };
   };
@@ -518,4 +509,33 @@ actor ECut {
 
     return ?(totalRating / Float.fromInt(barbershopEmployees.size()));
   };
+
+  private func get_employee_reviews(employeeId : Text) : [Review] {
+    let filteredReviews = Iter.filter(
+      reviews.entries(), 
+      func((_, review) : (Text, Review)) : Bool { 
+        review.revieweeId == employeeId and review.reviewType == #Employee 
+      }
+    );
+    
+    Iter.toArray(Iter.map(
+      filteredReviews, 
+      func((_, review) : (Text, Review)) : Review { review }
+    ));
+  };
+
+  private func get_barber_shop_reviews(barberShopId : Text) : [Review] {
+    let filteredReviews = Iter.filter(
+      reviews.entries(), 
+      func((_, review) : (Text, Review)) : Bool { 
+        review.revieweeId == barberShopId and review.reviewType == #BarberShop 
+      }
+    );
+    
+    Iter.toArray(Iter.map(
+      filteredReviews, 
+      func((_, review) : (Text, Review)) : Review { review }
+    ));
+  };
+
 };
