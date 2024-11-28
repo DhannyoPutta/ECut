@@ -174,17 +174,17 @@ actor ECut {
     totalRating / Float.fromInt(totalReviews);
   };
 
-private func generateToken(userId : Text) : Text {
+  private func generateToken(userId : Text) : Text {
     let timestamp = Time.now();
-    
-    let timestampText = debug_show(timestamp);
+
+    let timestampText = debug_show (timestamp);
 
     let rawToken = userId # "_" # timestampText;
 
     // this is where you operate the rawtoken
-    
+
     return rawToken;
-};
+  };
 
   public func create_user(user : UserCreate) : async Result.Result<User, Text> {
     if (Text.size(user.userName) <= 4) {
@@ -213,31 +213,35 @@ private func generateToken(userId : Text) : Text {
     return Iter.toArray(Iter.map<(Text, User), User>(users.entries(), func(entry) { entry.1 }));
   };
 
-  public func login(userId : Text, password : Text) : async Result.Result<Text, Text> {
-    switch (users.get(userId)) {
-      case (null) {
-        return #err("User not found");
-      };
-      case (?user) {
-        if (user.userPassword != password) {
-          return #err("Invalid password");
+  public func login(userEmail : Text, password : Text) : async Result.Result<Text, Text> {
+    let userEntry = Iter.find(users.entries(), func((id, user) : (Text, User)) {
+        user.email == userEmail
+    });
+
+    switch (userEntry) {
+        case (null) {
+            return #err("User not found");
         };
+        case (?(userId, user)) {
+            if (user.userPassword != password) {
+                return #err("Invalid password");
+            };
 
-        let token = generateToken(userId);
+            let token = generateToken(userId);
 
-        let session : Session = {
-          userId = userId;
-          token = token;
-          createdAt = Time.now();
-          expiresAt = Time.now() + 3600_000_000_000;
+            let session : Session = {
+                userId = userId;
+                token = token;
+                createdAt = Time.now();
+                expiresAt = Time.now() + 3600_000_000_000;
+            };
+
+            sessions.put(token, session);
+
+            return #ok(token);
         };
-
-        sessions.put(token, session);
-
-        return #ok(token);
-      };
     };
-  };
+};
 
   public func validate_session(token : Text) : async Result.Result<Text, Text> {
     switch (sessions.get(token)) {
