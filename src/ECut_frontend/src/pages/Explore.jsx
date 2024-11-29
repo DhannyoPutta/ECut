@@ -10,7 +10,6 @@ const ExplorePage = () => {
     useEffect(() => {
 
         ECut_backend.get_all_barberShops().then((result) => {
-            console.log(result)
             setData(result)
         })
 

@@ -6,7 +6,6 @@ const TopBarberShop = () => {
   const [data, setData] = useState();
   useEffect(() => {
     ECut_backend.get_all_barberShops().then((result) => {
-        console.log(result);
         setData(result);
     })
 }, [])
@@ -17,31 +16,31 @@ const TopBarberShop = () => {
 
   return (
 
-    <section id="chefs" class="barber-shop">
-    <div class="container" data-aos="fade-up">
+    <section id="chefs" className="barber-shop">
+    <div className="container" data-aos="fade-up">
 
-      <div class="section-title">
+      <div className="section-title">
         <h2>Barber Shop</h2>
         <p>Popular Barber Shop</p>
       </div>
 
-      <div class="row">
+      <div className="row">
 
       {data.map((datum) => (
-        <div class="col-lg-4 col-md-6" key={datum.barberShopId}>
-          <div class="member" data-aos="zoom-in" data-aos-delay="200">
+        <div className="col-lg-4 col-md-6" key={datum.barberShopId}>
+          <div className="member" data-aos="zoom-in" data-aos-delay="200">
             <img src={datum.barberShopProfileLink ?? "wp2.jpg"}
             alt={datum.barberShopName}
-            class="img-fluid"/>
-            <div class="member-info">
-              <div class="member-info-content">
+            className="img-fluid"/>
+            <div className="member-info">
+              <div className="member-info-content">
                 <h4>{datum.barberShopName}</h4>
-                <span>Rating : {datum.barberShopRating} <i class="bi bi-star"></i></span>
+                <span>Rating : {datum.barberShopRating} <i className="bi bi-star"></i></span>
               </div>
-              <div class="social">                
-                <a href=""><i class="bi bi-twitter"></i></a>
-                <a href=""><i class="bi bi-facebook"></i></a>
-                <a href=""><i class="bi bi-instagram"></i></a>
+              <div className="social">                
+                <a href=""><i className="bi bi-twitter"></i></a>
+                <a href=""><i className="bi bi-facebook"></i></a>
+                <a href=""><i className="bi bi-instagram"></i></a>
               </div>
             </div>
           </div>
