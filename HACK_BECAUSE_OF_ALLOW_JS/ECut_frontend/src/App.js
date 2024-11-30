@@ -6,24 +6,20 @@ import Login from './pages/Login';
 import ExplorePage from './pages/Explore';
 import BarberShopDetailPage from './pages/BarberShopDetail';
 import EmployeeDetailPage from './pages/EmployeeDetail';
-
 function App() {
-  return (
-    <Router>
+    return (<Router>
       {/* <Naviga /> */}
 
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home />}/>
         {/* <Route path="/about" element={<About />} /> */}
         {/* <Route path="/contact" element={<Contact />} /> */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/explore" element={<ExplorePage />} />
-        <Route path="/employee/:employeeId" element={<EmployeeDetailPage />} />
-        <Route path="/barbershop/:id" element={<BarberShopDetailPage />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="/login" element={<Login />}/>
+        <Route path="/explore" element={<ExplorePage />}/>
+        <Route path="/employee" element={<EmployeeDetailPage />}/>
+        <Route path="/barbershop/:id" element={<BarberShopDetailPage />}/>
+        <Route path="*" element={<NotFound />}/>
       </Routes>
-    </Router>
-  );
+    </Router>);
 }
-
 export default App;
