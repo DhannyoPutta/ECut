@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link, useLocation } from 'react
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
 import Login from './pages/Login';
+import Register from './pages/Register';
 import ExplorePage from './pages/Explore';
 import BarberShopDetailPage from './pages/BarberShopDetail';
 import EmployeeDetailPage from './pages/EmployeeDetail';
@@ -17,6 +18,7 @@ function App() {
         {/* <Route path="/about" element={<About />} /> */}
         {/* <Route path="/contact" element={<Contact />} /> */}
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/employee/:employeeId" element={<EmployeeDetailPage />} />
         <Route path="/barbershop/:id" element={<BarberShopDetailPage />} />
