@@ -13,12 +13,12 @@ const NavigationBar = () => {
   }
   console.log(userInfo);
   return (
-    <header id="header" className="fixed-top d-flex align-items-cente">
+    <header id="header" className="fixed-top d-flex align-items-center">
       <div className="container-fluid container-xl d-flex align-items-center justify-content-lg-between">
   
         <div className='font-bold flex items-center pl-4 text-3xl'>
         <a href="/" className="logo me-auto me-lg-0 pe-1 flex">
-          <img src="./logo.png" alt="ECut" className="img-fluid"/>
+          <img src="./ecut_logo.png" alt="ECut" className="img-fluid"/>
           <h1>
             ECut
           </h1>

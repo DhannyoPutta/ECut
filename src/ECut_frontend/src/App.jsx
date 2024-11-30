@@ -8,6 +8,8 @@ import ExplorePage from './pages/Explore';
 import BarberShopDetailPage from './pages/BarberShopDetail';
 import { ECut_backend } from 'declarations/ECut_backend';
 import { useSession } from './component/session/SessionUtil';
+import EmployeeDetailPage from './pages/EmployeeDetail';
+
 function App() {
 
     const { refreshSession } = useSession();
@@ -37,6 +39,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/explore" element={<ExplorePage />} />
+        <Route path="/employee/:employeeId" element={<EmployeeDetailPage />} />
         <Route path="/barbershop/:id" element={<BarberShopDetailPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
