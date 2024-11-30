@@ -4,6 +4,11 @@ import { Star, Phone, Clock } from "lucide-react";
 
 const EmployeeDetailPage = () => {
     const { employeeId } = useParams();
+    // const [employee, setEmployee] = useState(null);
+    // const [rating, setRating] = useState(null);
+    // const [portfolio, setPortfolio] = useState([]);
+    // const [reviews, setReviews] = useState([]);
+    // const [services, setServices] = useState([]);
 
     // Static employee data
     const employee = {
