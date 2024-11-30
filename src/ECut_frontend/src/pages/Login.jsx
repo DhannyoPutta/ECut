@@ -1,90 +1,82 @@
-import React, { useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import NavigationBar from '../component/navbar/Navbar';
+import { ECut_backend } from 'declarations/ECut_backend';
+import { useSession } from '../component/session/SessionUtil';
+import { useNavigate } from 'react-router-dom';
 const Login = () => {
+    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState("");
     const [formData, setFormData] = useState({
-        username: '',
         email: '',
         password: '',
-        confirmPassword: ''
     });
+
+    const { userInfo, login } = useSession();  
+    useEffect(() => {
+        const checkUser = async () => {
+          window.showLoader(); // Show the global loader
+          try {
+            if (userInfo) {
+              navigate("/"); // Redirect if logged in
+            }
+          } finally {
+            window.hideLoader(); // Always hide the loader
+          }
+        };
+
+        checkUser();
+
+    }, [userInfo, navigate])
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        window.showLoader();
+        await login(formData.email, formData.password);
+        window.hideLoader();
+
+        console.log("submitted"); // Replace with your form submission logic
         console.log(formData); // Replace with your form submission logic
     };
 
     return (
-        <div className="flex flex-col md:flex-row items-center justify-center min-h-screen bg-white text-tertiary space-y-6 md:space-y-0">
-            <div className="flex flex-col justify-center w-full max-w-md p-8 bg-opacity-50 rounded-l-lg shadow-lg backdrop-blur-lg md:h-[80vh]">
-                <h2 className="text-3xl font-semibold text-center mb-6">Welcome Back to ECut</h2>
-                <form onSubmit={handleSubmit} className="flex flex-col space-y-6">
-                    <div className="relative">
-                        <input
-                            type="text"
-                            name="username"
-                            value={formData.username}
-                            onChange={handleChange}
-                            required
-                            className="peer w-full px-4 py-2 text-lg bg-transparent border rounded-lg focus:outline-none focus:ring-2"
-                        />
-                        <label className="absolute left-4 -top-3.5 px-1 text-sm transition-all transform peer-placeholder-shown:top-3 peer-placeholder-shown:left-4 peer-focus:-top-3.5 peer-focus:left-4">
-                            Username
-                        </label>
+        <div>
+            <NavigationBar />
+            <div className="flex flex-col md:flex-col items-center justify-center min-h-screen text-tertiary space-y-6 md:space-y-0 login-background">
+                <div className="book-a-table w-50" data-aos="fade-up" data-aos-delay="100">
+                    <div className="section-title">
+                        <h2>Login</h2>
+                        <p>Welcome Back to ECut</p>
                     </div>
-                    <div className="relative">
-                        <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                            className="peer w-full px-4 py-2 text-lg bg-transparent border rounded-lg focus:outline-none focus:ring-2"
-                        />
-                        <label className="absolute left-4 -top-3.5 px-1 text-sm transition-all transform peer-placeholder-shown:top-3 peer-placeholder-shown:left-4 peer-focus:-top-3.5 peer-focus:left-4">
-                            Email
-                        </label>
-                    </div>
-                    <div className="relative">
-                        <input
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            required
-                            className="peer w-full px-4 py-2 text-lg bg-transparent border rounded-lg focus:outline-none focus:ring-2"
-                        />
-                        <label className="absolute left-4 -top-3.5 px-1 text-sm transition-all transform peer-placeholder-shown:top-3 peer-placeholder-shown:left-4 peer-focus:-top-3.5 peer-focus:left-4">
-                            Password
-                        </label>
-                    </div>
-                    <div className="relative">
-                        <input
-                            type="password"
-                            name="confirmPassword"
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            required
-                            className="peer w-full px-4 py-2 text-lg bg-transparent border rounded-lg focus:outline-none focus:ring-2"
-                        />
-                        <label className="absolute left-4 -top-3.5 px-1 text-sm transition-all transform peer-placeholder-shown:top-3 peer-placeholder-shown:left-4 peer-focus:-top-3.5 peer-focus:left-4">
-                            Confirm Password
-                        </label>
-                    </div>
-                    <button
-                        type="submit"
-                        className="w-full py-2 mt-4 text-lg font-semibold rounded-lg transition-all duration-300 shadow-lg hover:shadow-primary/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                    >
-                        Enter
-                    </button>
-                </form>
-            </div>
-            <div className="hidden md:flex md:items-center md:justify-center md:h-[80vh]">
-                <img src="./login.jpg" alt="Login Visual" className="w-full h-full object-cover rounded-r-lg shadow-lg" />
+
+                    <form onSubmit={handleSubmit} role="form" className="php-email-form">
+                        <div className="row">
+                            <div className="col-lg-12 col-md-6 form-group">
+                                <input type="email" name="email" className="form-control" 
+                                value={formData.email} id="email"
+                                onChange={handleChange} autoComplete="off"
+                                placeholder="Email" required
+                                />
+                            </div>
+                            <div className="col-lg-12 col-md-6 form-group mt-3 mt-md-0">
+                                <input type="password" className="form-control" name="password" placeholder="Password" id="password"
+                                value={formData.password}
+                                onChange={handleChange}/>
+                            </div>
+                        </div>
+                        <span style={{ color: "red" }}>{errorMessage}</span>
+                        <div className="text-center mt-4">
+                            <a href="register" className="hyper-link" >Doesn't Have an Account ? Register Now</a>
+                        </div>
+                        <div className="text-center mt-1"><button type="submit">Login</button></div>
+                        
+                    </form>                
+                </div>
+
             </div>
         </div>
     );

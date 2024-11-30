@@ -1,70 +1,56 @@
 import React, { useEffect, useState } from 'react';
+import { ECut_backend } from 'declarations/ECut_backend';
+import LoadingPage from '../../component/loading/page'
 
 const TopBarberShop = () => {
-  const [data, setData] = useState([]);
-
+  const [data, setData] = useState();
   useEffect(() => {
-    setData([
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 1",
-        barberShopRating: 3.14,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 2",
-        barberShopRating: 4.1,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 3",
-        barberShopRating: 4.8,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 4",
-        barberShopRating: 3.9,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 5",
-        barberShopRating: 4.5,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 6",
-        barberShopRating: 4.2,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 7",
-        barberShopRating: 3.7,
-      },
-      {
-        barberShopProfileLink: "wp2.jpg",
-        barberShopName: "Shop 8",
-        barberShopRating: 4.3,
-      },
-    ]);
-  }, []);
+    ECut_backend.get_all_barberShops().then((result) => {
+        setData(result);
+    })
+}, [])
+
+  if (!data) {
+    return <LoadingPage />
+  }
 
   return (
-    <div className="w-screen flex flex-col items-center h-screen bg-white text-tertiary">
-      <h1 className="text-5xl font-bold text-center py-4">Most Famous Barbershops</h1>
-      <div className="w-2/3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 p-4">
-        {data.map((datum, index) => (
-          <div key={index} className="bg-white text-tertiary p-4 rounded-lg shadow-lg">
-            <img
-              src={datum.barberShopProfileLink}
-              alt={datum.barberShopName}
-              className="w-full h-40 object-cover rounded-t-lg"
-            />
-            <h2 className="text-xl font-semibold mt-2">{datum.barberShopName}</h2>
-            <p className="font-medium">Rating: {datum.barberShopRating}</p>
-          </div>
-        ))}
+
+    <section id="chefs" className="barber-shop">
+    <div className="container" data-aos="fade-up">
+
+      <div className="section-title">
+        <h2>Barber Shop</h2>
+        <p>Popular Barber Shop</p>
       </div>
+
+      <div className="row">
+
+      {data.map((datum) => (
+        <div className="col-lg-4 col-md-6" key={datum.barberShopId}>
+          <div className="member" data-aos="zoom-in" data-aos-delay="200">
+            <img src={datum.barberShopProfileLink ?? "wp2.jpg"}
+            alt={datum.barberShopName}
+            className="img-fluid"/>
+            <div className="member-info">
+              <div className="member-info-content">
+                <h4>{datum.barberShopName}</h4>
+                <span>Rating : {datum.barberShopRating} <i className="bi bi-star"></i></span>
+              </div>
+              <div className="social">                
+                <a href=""><i className="bi bi-twitter"></i></a>
+                <a href=""><i className="bi bi-facebook"></i></a>
+                <a href=""><i className="bi bi-instagram"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>      
+      ))}
+      </div>
+
     </div>
+  </section>
+
   );
 };
 

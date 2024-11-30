@@ -2,21 +2,23 @@ import React from 'react'
 
 const Jumbotron = () => {
     return (
-        <div className='w-screen h-screen flex justify-center items-center bg-[url(/fina.png)] bg-cover text-tertiary'>
-            <div className='flex flex-col space-y-8 -translate-x-52'>
-                <div className='font-bold text-7xl'>
-                    Extraordinary<br />Barber Hub For Hair <br /> Enthusiasts
-                </div>
-                <div className="flex gap-8">
-                    <button className="text-xl font-semibold px-6 py-2 bg-primary rounded text-black hover:text-white hover:shadow-[0px_0px_25px_8px_rgba(253,195,21,0.5)] transition duration-500">
-                        <a href="explore">Explore</a>
-                    </button>
-                    <button className="text-xl font-semibold px-6 py-2 bg-secondary rounded text-black hover:text-white hover:shadow-[0px_0px_25px_8px_rgba(158,158,158,0.5)] transition duration-500" href="register">
-                        <a href="register">Join</a>
-                    </button>
-                </div>
+        <section id="hero" className="d-flex align-items-center">
+        <div className="container position-relative text-center text-lg-start" data-aos="zoom-in" data-aos-delay="100">
+          <div className="row">
+            <div className="col-lg-12">
+                
+              <h1>Welcome to <span>ECut</span></h1>
+              <h1>Extraordinary Barber Hub For Hair Enthusiasts</h1>
+    
+              <div className="btns">
+                <a href="explore" className="btn-menu animated fadeInUp">Explore</a>
+                <a href="login" className="btn-book animated fadeInUp">Login</a>
+              </div>
             </div>
+          </div>
         </div>
+      </section>
+    
     )
 }
 

@@ -18,7 +18,6 @@ const Home = () => {
             };
 
             function success(position) {
-                console.log(position);
                 setCoordinates({
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude
