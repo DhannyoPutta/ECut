@@ -12,7 +12,7 @@ const Jumbotron = () => {
                         <a href="explore">Explore</a>
                     </button>
                     <button className="text-xl font-semibold px-6 py-2 bg-secondary rounded text-black hover:text-white hover:shadow-[0px_0px_25px_8px_rgba(158,158,158,0.5)] transition duration-500" href="register">
-                        <a href="register">Explore</a>
+                        <a href="register">Join</a>
                     </button>
                 </div>
             </div>
